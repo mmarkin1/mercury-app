@@ -19,28 +19,26 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-
-    - name: Create Project Files
+    - name: Prepare Clean Project Structure
       run: |
+        rm -rf app settings.gradle.kts build.gradle.kts
         mkdir -p app/src/main/java/com/mercury/configurator
         mkdir -p app/src/main/res/layout
 
-        echo 'rootProject.name = "mercury-app"' > settings.gradle.kts
-        echo 'include(":app")' >> settings.gradle.kts
+        printf 'pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n        maven { url = java.net.URI("https://jitpack.io") }\n    }\n}\nrootProject.name = "mercury-app"\ninclude(":app")\n' > settings.gradle.kts
 
-        echo 'plugins { id("com.android.application") version "8.2.2" apply false; id("org.jetbrains.kotlin.android") version "1.9.22" apply false }' > build.gradle.kts
+        printf 'plugins {\n    id("com.android.application") version "8.2.2" apply false\n    id("org.jetbrains.kotlin.android") version "1.9.22" apply false\n}\n' > build.gradle.kts
 
-        echo 'plugins { id("com.android.application"); id("org.jetbrains.kotlin.android") }' > app/build.gradle.kts
-        echo 'android { namespace = "com.mercury.configurator"; compileSdk = 34; defaultConfig { applicationId = "com.mercury.configurator"; minSdk = 26; targetSdk = 34; versionCode = 1; versionName = "1.0" }; compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }; kotlinOptions { jvmTarget = "17" } }' >> app/build.gradle.kts
-        echo 'dependencies { implementation("androidx.core:core-ktx:1.12.0"); implementation("androidx.appcompat:appcompat:1.6.1"); implementation("com.google.android.material:material:1.11.0") }' >> app/build.gradle.kts
+        printf 'plugins {\n    id("com.android.application")\n    id("org.jetbrains.kotlin.android")\n}\n\nandroid {\n    namespace = "com.mercury.configurator"\n    compileSdk = 34\n\n    defaultConfig {\n        applicationId = "com.mercury.configurator"\n        minSdk = 26\n        targetSdk = 34\n        versionCode = 1\n        versionName = "1.0"\n    }\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n    kotlinOptions {\n        jvmTarget = "17"\n    }\n}\n\ndependencies {\n    implementation("androidx.core:core-ktx:1.12.0")\n    implementation("androidx.appcompat:appcompat:1.6.1")\n    implementation("com.google.android.material:material:1.11.0")\n}\n' > app/build.gradle.kts
 
-        echo '<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><application android:allowBackup="true" android:label="Mercury Configurator" android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter></activity></application></manifest>' > app/src/main/AndroidManifest.xml
+        printf '<?xml version="1.0" encoding="utf-8"?>\n<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    <application android:allowBackup="true" android:label="Mercury Configurator" android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">\n        <activity android:name=".MainActivity" android:exported="true">\n            <intent-filter>\n                <action android:name="android.intent.action.MAIN" />\n                <category android:name="android.intent.category.LAUNCHER" />\n            </intent-filter>\n        </activity>\n    </application>\n</manifest>\n' > app/src/main/AndroidManifest.xml
 
-        echo '<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mercury Configurator" android:textSize="20sp"/></LinearLayout>' > app/src/main/res/layout/activity_main.xml
+        printf '<?xml version="1.0" encoding="utf-8"?>\n<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center">\n    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mercury Configurator" android:textSize="20sp"/>\n</LinearLayout>\n' > app/src/main/res/layout/activity_main.xml
 
-        echo 'package com.mercury.configurator; import android.os.Bundle; import androidx.appcompat.app.AppCompatActivity; class MainActivity : AppCompatActivity() { override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState); setContentView(R.layout.activity_main) } }' > app/src/main/java/com/mercury/configurator/MainActivity.kt
+        printf 'package com.mercury.configurator\n\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\n\nclass MainActivity : AppCompatActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n    }\n}\n' > app/src/main/java/com/mercury/configurator/MainActivity.kt
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
 
     - name: Build APK
       run: gradle :app:assembleDebug
