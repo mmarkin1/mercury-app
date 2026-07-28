@@ -43,7 +43,7 @@ jobs:
         printf 'package com.mercury.configurator\n\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\n\nclass MainActivity : AppCompatActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n    }\n}\n' > app/src/main/java/com/mercury/configurator/MainActivity.kt
 
     - name: Build APK
-      run: gradle :app:assembleDebug --stacktrace
+      run: gradle :app:assembleDebug --info
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
