@@ -19,6 +19,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Setup Gradle 8.4
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.4'
+
     - name: Prepare Clean Project Structure
       run: |
         rm -rf app settings.gradle.kts build.gradle.kts
@@ -36,9 +41,6 @@ jobs:
         printf '<?xml version="1.0" encoding="utf-8"?>\n<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center">\n    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mercury Configurator" android:textSize="20sp"/>\n</LinearLayout>\n' > app/src/main/res/layout/activity_main.xml
 
         printf 'package com.mercury.configurator\n\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\n\nclass MainActivity : AppCompatActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n    }\n}\n' > app/src/main/java/com/mercury/configurator/MainActivity.kt
-
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
 
     - name: Build APK
       run: gradle :app:assembleDebug
