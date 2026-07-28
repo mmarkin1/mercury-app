@@ -19,6 +19,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+
     - name: Generate All Source Files via Bash
       run: |
         mkdir -p app/src/main/java/com/mercury/configurator
