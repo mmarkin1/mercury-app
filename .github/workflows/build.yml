@@ -19,13 +19,26 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
+    - name: Setup Gradle Wrapper
+      run: gradle wrapper --gradle-version 8.4
 
     - name: Generate All Source Files via Bash
       run: |
         mkdir -p app/src/main/java/com/mercury/configurator
         mkdir -p app/src/main/res/layout
+
+        cat << 'EOF' > build.gradle.kts
+        buildscript {
+            repositories {
+                google()
+                mavenCentral()
+            }
+            dependencies {
+                classpath("com.android.tools.build:gradle:8.2.2")
+                classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22")
+            }
+        }
+        EOF
 
         cat << 'EOF' > app/build.gradle.kts
         plugins {
@@ -116,8 +129,8 @@ jobs:
         }
         EOF
 
-    - name: Build APK with Gradle
-      run: gradle :app:assembleDebug
+    - name: Build APK with Gradle Wrapper
+      run: ./gradlew assembleDebug --no-daemon
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
