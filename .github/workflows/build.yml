@@ -21,6 +21,9 @@ jobs:
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
+      with:
+        # Отключаем проблемный кэш GitHub, чтобы сборка не зависела от их серверов
+        cache-read-only: true
 
     - name: Prepare Clean Project Structure
       run: |
@@ -40,11 +43,10 @@ jobs:
 
         printf 'package com.mercury.configurator\n\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\n\nclass MainActivity : AppCompatActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n    }\n}\n' > app/src/main/java/com/mercury/configurator/MainActivity.kt
 
-        # Генерируем официальный Wrapper с жестко зафиксированной версией 8.4
         gradle wrapper --gradle-version 8.4
 
     - name: Build APK
-      run: ./gradlew :app:assembleDebug --info
+      run: ./gradlew :app:assembleDebug --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
