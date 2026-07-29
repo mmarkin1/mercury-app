@@ -23,35 +23,364 @@ jobs:
       uses: gradle/actions/setup-gradle@v3
       with:
         gradle-version: '8.6'
-        cache-read-only: true
 
-    - name: Prepare Clean Project Structure
+    - name: Create Project Structure
       run: |
-        rm -rf app settings.gradle.kts build.gradle.kts gradle gradlew gradle.properties
         mkdir -p app/src/main/java/com/mercury/configurator
         mkdir -p app/src/main/res/values
         mkdir -p app/src/main/res/layout
 
-        printf 'android.suppressUnsupportedCompileSdk=34\norg.gradle.daemon=false\nandroid.useAndroidX=true\nandroid.enableJetifier=true\n' > gradle.properties
+        cat << 'EOF' > build.gradle.kts
+        plugins {
+            id("com.android.application") version "8.3.0" apply false
+            id("org.jetbrains.kotlin.android") version "1.9.23" apply false
+        }
+        EOF
 
-        printf 'pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\nrootProject.name = "mercury-app"\ninclude(":app")\n' > settings.gradle.kts
+        cat << 'EOF' > settings.gradle.kts
+        pluginManagement {
+            repositories {
+                google()
+                mavenCentral()
+                gradlePluginPortal()
+            }
+        }
+        dependencyResolutionManagement {
+            repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+            repositories {
+                google()
+                mavenCentral()
+            }
+        }
+        rootProject.name = "mercury-app"
+        include(":app")
+        EOF
 
-        printf 'plugins {\n    id("com.android.application") version "8.3.0" apply false\n    id("org.jetbrains.kotlin.android") version "1.9.23" apply false\n}\n' > build.gradle.kts
+        cat << 'EOF' > gradle.properties
+        android.suppressUnsupportedCompileSdk=34
+        org.gradle.daemon=false
+        android.useAndroidX=true
+        android.enableJetifier=true
+        EOF
 
-        printf 'plugins {\n    id("com.android.application")\n    id("org.jetbrains.kotlin.android")\n}\n\nandroid {\n    namespace = "com.mercury.configurator"\n    compileSdk = 34\n\n    defaultConfig {\n        applicationId = "com.mercury.configurator"\n        minSdk = 26\n        targetSdk = 34\n        versionCode = 1\n        versionName = "1.0"\n    }\n\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n\n    kotlinOptions {\n        jvmTarget = "17"\n    }\n}\n\ndependencies {\n    implementation("androidx.core:core-ktx:1.12.0")\n    implementation("androidx.appcompat:appcompat:1.6.1")\n    implementation("com.google.android.material:material:1.11.0")\n}\n' > app/build.gradle.kts
+        cat << 'EOF' > app/build.gradle.kts
+        plugins {
+            id("com.android.application")
+            id("org.jetbrains.kotlin.android")
+        }
 
-        printf '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <string name="app_name">Меркурий Конфигуратор</string>\n    <style name="Theme.MercuryConfigurator" parent="Theme.Material3.DayNight.NoActionBar">\n        <item name="colorPrimary">#006874</item>\n        <item name="colorSecondary">#4A6267</item>\n    </style>\n</resources>\n' > app/src/main/res/values/styles.xml
+        android {
+            namespace = "com.mercury.configurator"
+            compileSdk = 34
 
-        printf '<?xml version="1.0" encoding="utf-8"?>\n<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    <uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />\n    <uses-permission android:name="android.permission.BLUETOOTH" />\n    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />\n    \n    <application\n        android:allowBackup="true"\n        android:icon="@mipmap/ic_launcher"\n        android:label="@string/app_name"\n        android:roundIcon="@mipmap/ic_launcher_round"\n        android:supportsRtl="true"\n        android:theme="@style/Theme.MercuryConfigurator">\n        <activity\n            android:name=".MainActivity"\n            android:exported="true">\n            <intent-filter>\n                <action android:name="android.intent.action.MAIN" />\n                <category android:name="android.intent.category.LAUNCHER" />\n            </intent-filter>\n        </activity>\n    </application>\n</manifest>\n' > app/src/main/AndroidManifest.xml
+            defaultConfig {
+                applicationId = "com.mercury.configurator"
+                minSdk = 26
+                targetSdk = 34
+                versionCode = 1
+                versionName = "1.0"
+            }
 
-        printf '<?xml version="1.0" encoding="utf-8"?>\n<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"\n    android:layout_width="match_parent"\n    android:layout_height="match_parent"\n    android:orientation="vertical"\n    android:background="#F5F5F5">\n\n    <!-- Панель подключения -->\n    <LinearLayout\n        android:layout_width="match_parent"\n        android:layout_height="wrap_content"\n        android:orientation="vertical"\n        android:background="#FFFFFF"\n        android:padding="12dp"\n        android:elevation="4dp">\n\n        <TextView\n            android:layout_width="wrap_content"\n            android:layout_height="wrap_content"\n            android:text="Интерфейс связи"\n            android:textStyle="bold"\n            android:textColor="#006874"/>\n\n        <Spinner\n            android:id="@+id/spinnerInterface"\n            android:layout_width="match_parent"\n            android:layout_height="wrap_content"\n            android:layout_marginTop="4dp"/>\n\n        <LinearLayout\n            android:layout_width="match_parent"\n            android:layout_height="wrap_content"\n            android:orientation="horizontal"\n            android:layout_marginTop="8dp">\n\n            <Spinner\n                android:id="@+id/spinnerProtocol"\n                android:layout_width="0dp"\n                android:layout_height="wrap_content"\n                android:layout_weight="1"/>\n\n            <Button\n                android:id="@+id/btnConnect"\n                android:layout_width="wrap_content"\n                android:layout_height="wrap_content"\n                android:text="Подключить"\n                android:backgroundTint="#006874"\n                android:textColor="#FFFFFF"\n                android:layout_marginStart="8dp"/>\n        </LinearLayout>\n    </LinearLayout>\n\n    <!-- Табы/Вкладки -->\n    <com.google.android.material.tabs.TabLayout\n        android:id="@+id/tabLayout"\n        android:layout_width="match_parent"\n        android:layout_height="wrap_content"\n        android:background="#FFFFFF"/>\n\n    <!-- Содержимое вкладок -->\n    <ScrollView\n        android:layout_width="match_parent"\n        android:layout_height="match_parent"\n        android:padding="16dp">\n\n        <LinearLayout\n            android:layout_width="match_parent"\n            android:layout_height="wrap_content"\n            android:orientation="vertical">\n\n            <TextView\n                android:id="@+id/tvStatus"\n                android:layout_width="match_parent"\n                android:layout_height="wrap_content"\n                android:text="Статус: Не подключено"\n                android:textSize="14sp"\n                android:textColor="#D32F2F"\n                android:textStyle="bold"\n                android:paddingBottom="8dp"/>\n\n            <!-- Секция: Энергия -->\n            <LinearLayout\n                android:id="@+id/layoutEnergy"\n                android:layout_width="match_parent"\n                android:layout_height="wrap_content"\n                android:orientation="vertical">\n\n                <TextView android:text="Накопленная энергия:" android:textStyle="bold" android:textSize="16sp"/>\n                <TextView android:id="@+id/tvEnergyAPlus" android:text="А+ (Активная прямая): 0.00 кВт*ч" android:layout_marginTop="4dp"/>\n                <TextView android:id="@+id/tvEnergyAMinus" android:text="А- (Активная обратная): 0.00 кВт*ч"/>\n                <TextView android:id="@+id/tvEnergyRPlus" android:text="Р+ (Реактивная индуктивная): 0.00 квар*ч"/>\n                <TextView android:id="@+id/tvEnergyRMinus" android:text="Р- (Реактивная емкостная): 0.00 квар*ч"/>\n\n                <Button\n                    android:id="@+id/btnReadEnergy"\n                    android:layout_width="match_parent"\n                    android:layout_height="wrap_content"\n                    android:text="Считать энергию"\n                    android:layout_marginTop="8dp"/>\n            </LinearLayout>\n\n            <!-- Секция: Параметры сети (Ток, напряжение, дата/время) -->\n            <LinearLayout\n                android:id="@+id/layoutNetwork"\n                android:layout_width="match_parent"\n                android:layout_height="wrap_content"\n                android:orientation="vertical"\n                android:visibility="gone">\n\n                <TextView android:text="Мгновенные параметры:" android:textStyle="bold" android:textSize="16sp"/>\n                <TextView android:id="@+id/tvVoltage" android:text="Напряжение (U): Фаза A=0 В, B=0 В, C=0 В" android:layout_marginTop="4dp"/>\n                <TextView android:id="@+id/tvCurrent" android:text="Ток (I): Фаза A=0 А, B=0 А, C=0 А"/>\n                <TextView android:id="@+id/tvDateTime" android:text="Дата и время счетчика: --.--.---- --:--:--" android:layout_marginTop="8dp" android:textStyle="bold"/>\n\n                <Button\n                    android:id="@+id/btnReadNetwork"\n                    android:layout_width="match_parent"\n                    android:layout_height="wrap_content"\n                    android:text="Считать параметры и время"\n                    android:layout_marginTop="8dp"/>\n            </LinearLayout>\n\n            <!-- Секция: Векторная диаграмма -->\n            <LinearLayout\n                android:id="@+id/layoutVector"\n                android:layout_width="match_parent"\n                android:layout_height="wrap_content"\n                android:orientation="vertical"\n                android:visibility="gone">\n\n                <TextView android:text="Векторная диаграмма углов и фаз:" android:textStyle="bold" android:textSize="16sp"/>\n                <TextView android:text="Углы между напряжениями и токами:" android:layout_marginTop="4dp"/>\n                <TextView android:id="@+id/tvVectorA" android:text="Фаза A: U=0°, I=0° (Cosφ = 1.0)"/>\n                <TextView android:id="@+id/tvVectorB" android:text="Фаза B: U=120°, I=120° (Cosφ = 1.0)"/>\n                <TextView android:id="@+id/tvVectorC" android:text="Фаза C: U=240°, I=240° (Cosφ = 1.0)"/>\n\n                <Button\n                    android:id="@+id/btnReadVector"\n                    android:layout_width="match_parent"\n                    android:layout_height="wrap_content"\n                    android:text="Обновить векторную диаграмму"\n                    android:layout_marginTop="8dp"/>\n            </LinearLayout>\n\n        </LinearLayout>\n    </ScrollView>\n</LinearLayout>\n' > app/src/main/res/layout/activity_main.xml
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
 
-        printf 'package com.mercury.configurator\n\nimport android.os.Bundle\nimport android.view.View\nimport android.widget.*\nimport androidx.appcompat.app.AppCompatActivity\nimport com.google.android.material.tabs.TabLayout\nimport java.text.SimpleDateFormat\nimport java.util.*\n\nclass MainActivity : AppCompatActivity() {\n    private var isConnected = false\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n\n        val spinnerInterface = findViewById<Spinner>(R.id.spinnerInterface)\n        val spinnerProtocol = findViewById<Spinner>(R.id.spinnerProtocol)\n        val btnConnect = findViewById<Button>(R.id.btnConnect)\n        val tvStatus = findViewById<TextView>(R.id.tvStatus)\n        val tabLayout = findViewById<TabLayout>(R.id.tabLayout)\n\n        val layoutEnergy = findViewById<LinearLayout>(R.id.layoutEnergy)\n        val layoutNetwork = findViewById<LinearLayout>(R.id.layoutNetwork)\n        val layoutVector = findViewById<LinearLayout>(R.id.layoutVector)\n\n        spinnerInterface.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, arrayOf("RS-485", "TCP/IP", "Оптопорт (УСО-2)"))\n        spinnerProtocol.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, arrayOf("Протокол Меркурий", "СПОДЕС"))\n\n        tabLayout.addTab(tabLayout.newTab().setText("Энергия"))\n        tabLayout.addTab(tabLayout.newTab().setText("Сеть и Время"))\n        tabLayout.addTab(tabLayout.newTab().setText("Вектора"))\n\n        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {\n            override fun onTabSelected(tab: TabLayout.Tab?) {\n                layoutEnergy.visibility = View.GONE\n                layoutNetwork.visibility = View.GONE\n                layoutVector.visibility = View.GONE\n                when (tab?.position) {\n                    0 -> layoutEnergy.visibility = View.VISIBLE\n                    1 -> layoutNetwork.visibility = View.VISIBLE\n                    2 -> layoutVector.visibility = View.VISIBLE\n                }\n            }\n            override fun onTabUnselected(tab: TabLayout.Tab?) {}\n            override fun onTabReselected(tab: TabLayout.Tab?) {}\n        })\n\n        btnConnect.setOnClickListener {\n            isConnected = !isConnected\n            if (isConnected) {\n                tvStatus.text = "Статус: Подключено (" + spinnerInterface.selectedItem + " / " + spinnerProtocol.selectedItem + ")"\n                tvStatus.setTextColor(android.graphics.Color.parseColor("#388E3C"))\n                btnConnect.text = "Отключить"\n                Toast.makeText(this, "Успешное соединение со счетчиком", Toast.LENGTH_SHORT).show()\n            } else {\n                tvStatus.text = "Статус: Не подключено"\n                tvStatus.setTextColor(android.graphics.Color.parseColor("#D32F2F"))\n                btnConnect.text = "Подключить"\n            }\n        }\n\n        findViewById<Button>(R.id.btnReadEnergy).setOnClickListener {\n            if (!isConnected) { showToast("Сначала подключитесь к счетчику!"); return@setOnClickListener }\n            findViewById<TextView>(R.id.tvEnergyAPlus).text = "А+ (Активная прямая): 1423.56 кВт*ч"\n            findViewById<TextView>(R.id.tvEnergyAMinus).text = "А- (Активная обратная): 12.40 кВт*ч"\n            findViewById<TextView>(R.id.tvEnergyRPlus).text = "Р+ (Реактивная индуктивная): 156.80 квар*ч"\n            findViewById<TextView>(R.id.tvEnergyRMinus).text = "Р- (Реактивная емкостная): 5.12 квар*ч"\n            showToast("Энергия успешно считана")\n        }\n\n        findViewById<Button>(R.id.btnReadNetwork).setOnClickListener {\n            if (!isConnected) { showToast("Сначала подключитесь к счетчику!"); return@setOnClickListener }\n            findViewById<TextView>(R.id.tvVoltage).text = "Напряжение (U): Фаза A=230.4 В, B=229.8 В, C=231.1 В"\n            findViewById<TextView>(R.id.tvCurrent).text = "Ток (I): Фаза A=5.2 А, B=4.8 А, C=5.1 А"\n            \n            val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault())\n            findViewById<TextView>(R.id.tvDateTime).text = "Дата и время счетчика: " + sdf.format(Date())\n            showToast("Параметры и время считаны")\n        }\n\n        findViewById<Button>(R.id.btnReadVector).setOnClickListener {\n            if (!isConnected) { showToast("Сначала подключитесь к счетчику!"); return@setOnClickListener }\n            findViewById<TextView>(R.id.tvVectorA).text = "Фаза A: U=0°, I=15° (Cosφ = 0.96)"\n            findViewById<TextView>(R.id.tvVectorB).text = "Фаза B: U=120°, I=135° (Cosφ = 0.95)"\n            findViewById<TextView>(R.id.tvVectorC).text = "Фаза C: U=240°, I=252° (Cosφ = 0.97)"\n            showToast("Векторная диаграмма построена")\n        }\n    }\n\n    private fun showToast(msg: String) {\n        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()\n    }\n}\n' > app/src/main/java/com/mercury/configurator/MainActivity.kt
+            kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
+
+        dependencies {
+            implementation("androidx.core:core-ktx:1.12.0")
+            implementation("androidx.appcompat:appcompat:1.6.1")
+            implementation("com.google.android.material:material:1.11.0")
+        }
+        EOF
+
+        cat << 'EOF' > app/src/main/res/values/styles.xml
+        <resources>
+            <string name="app_name">Меркурий Конфигуратор</string>
+            <style name="Theme.MercuryConfigurator" parent="Theme.Material3.DayNight.NoActionBar">
+                <item name="colorPrimary">#006874</item>
+                <item name="colorSecondary">#4A6267</item>
+            </style>
+        </resources>
+        EOF
+
+        cat << 'EOF' > app/src/main/AndroidManifest.xml
+        <?xml version="1.0" encoding="utf-8"?>
+        <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+            <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+            
+            <application
+                android:allowBackup="true"
+                android:icon="@mipmap/ic_launcher"
+                android:label="@string/app_name"
+                android:roundIcon="@mipmap/ic_launcher_round"
+                android:supportsRtl="true"
+                android:theme="@style/Theme.MercuryConfigurator">
+                <activity
+                    android:name=".MainActivity"
+                    android:exported="true">
+                    <intent-filter>
+                        <action android:name="android.intent.action.MAIN" />
+                        <category android:name="android.intent.category.LAUNCHER" />
+                    </intent-filter>
+                </activity>
+            </application>
+        </manifest>
+        EOF
+
+        cat << 'EOF' > app/src/main/res/layout/activity_main.xml
+        <?xml version="1.0" encoding="utf-8"?>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="#F5F5F5">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:elevation="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Интерфейс связи"
+                    android:textStyle="bold"
+                    android:textColor="#006874"/>
+
+                <Spinner
+                    android:id="@+id/spinnerInterface"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <Spinner
+                        android:id="@+id/spinnerProtocol"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+
+                    <Button
+                        android:id="@+id/btnConnect"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Подключить"
+                        android:backgroundTint="#006874"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginStart="8dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"/>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Статус: Не подключено"
+                        android:textSize="14sp"
+                        android:textColor="#D32F2F"
+                        android:textStyle="bold"
+                        android:paddingBottom="8dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/layoutEnergy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView android:text="Накопленная энергия:" android:textStyle="bold" android:textSize="16sp"/>
+                        <TextView android:id="@+id/tvEnergyAPlus" android:text="А+ (Активная прямая): 0.00 кВт*ч" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tvEnergyAMinus" android:text="А- (Активная обратная): 0.00 кВт*ч"/>
+                        <TextView android:id="@+id/tvEnergyRPlus" android:text="Р+ (Реактивная индуктивная): 0.00 квар*ч"/>
+                        <TextView android:id="@+id/tvEnergyRMinus" android:text="Р- (Реактивная емкостная): 0.00 квар*ч"/>
+
+                        <Button
+                            android:id="@+id/btnReadEnergy"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Считать энергию"
+                            android:layout_marginTop="8dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutNetwork"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView android:text="Мгновенные параметры:" android:textStyle="bold" android:textSize="16sp"/>
+                        <TextView android:id="@+id/tvVoltage" android:text="Напряжение (U): Фаза A=0 В, B=0 В, C=0 В" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tvCurrent" android:text="Ток (I): Фаза A=0 А, B=0 А, C=0 А"/>
+                        <TextView android:id="@+id/tvDateTime" android:text="Дата и время счетчика: --.--.---- --:--:--" android:layout_marginTop="8dp" android:textStyle="bold"/>
+
+                        <Button
+                            android:id="@+id/btnReadNetwork"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Считать параметры и время"
+                            android:layout_marginTop="8dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutVector"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView android:text="Векторная диаграмма углов и фаз:" android:textStyle="bold" android:textSize="16sp"/>
+                        <TextView android:text="Углы между напряжениями и токами:" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tvVectorA" android:text="Фаза A: U=0°, I=0° (Cosφ = 1.0)"/>
+                        <TextView android:id="@+id/tvVectorB" android:text="Фаза B: U=120°, I=120° (Cosφ = 1.0)"/>
+                        <TextView android:id="@+id/tvVectorC" android:text="Фаза C: U=240°, I=240° (Cosφ = 1.0)"/>
+
+                        <Button
+                            android:id="@+id/btnReadVector"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Обновить векторную диаграмму"
+                            android:layout_marginTop="8dp"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+        EOF
+
+        cat << 'EOF' > app/src/main/java/com/mercury/configurator/MainActivity.kt
+        package com.mercury.configurator
+
+        import android.os.Bundle
+        import android.view.View
+        import android.widget.*
+        import androidx.appcompat.app.AppCompatActivity
+        import com.google.android.material.tabs.TabLayout
+        import java.text.SimpleDateFormat
+        import java.util.*
+
+        class MainActivity : AppCompatActivity() {
+            private var isConnected = false
+
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+
+                val spinnerInterface = findViewById<Spinner>(R.id.spinnerInterface)
+                val spinnerProtocol = findViewById<Spinner>(R.id.spinnerProtocol)
+                val btnConnect = findViewById<Button>(R.id.btnConnect)
+                val tvStatus = findViewById<TextView>(R.id.tvStatus)
+                val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
+
+                val layoutEnergy = findViewById<LinearLayout>(R.id.layoutEnergy)
+                val layoutNetwork = findViewById<LinearLayout>(R.id.layoutNetwork)
+                val layoutVector = findViewById<LinearLayout>(R.id.layoutVector)
+
+                spinnerInterface.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, arrayOf("RS-485", "TCP/IP", "Оптопорт (УСО-2)"))
+                spinnerProtocol.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, arrayOf("Протокол Меркурий", "СПОДЕС"))
+
+                tabLayout.addTab(tabLayout.newTab().setText("Энергия"))
+                tabLayout.addTab(tabLayout.newTab().setText("Сеть и Время"))
+                tabLayout.addTab(tabLayout.newTab().setText("Вектора"))
+
+                tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                    override fun onTabSelected(tab: TabLayout.Tab?) {
+                        layoutEnergy.visibility = View.GONE
+                        layoutNetwork.visibility = View.GONE
+                        layoutVector.visibility = View.GONE
+                        when (tab?.position) {
+                            0 -> layoutEnergy.visibility = View.VISIBLE
+                            1 -> layoutNetwork.visibility = View.VISIBLE
+                            2 -> layoutVector.visibility = View.VISIBLE
+                        }
+                    }
+                    override fun onTabUnselected(tab: TabLayout.Tab?) {}
+                    override fun onTabReselected(tab: TabLayout.Tab?) {}
+                })
+
+                btnConnect.setOnClickListener {
+                    isConnected = !isConnected
+                    if (isConnected) {
+                        tvStatus.text = "Статус: Подключено (" + spinnerInterface.selectedItem + " / " + spinnerProtocol.selectedItem + ")"
+                        tvStatus.setTextColor(android.graphics.Color.parseColor("#388E3C"))
+                        btnConnect.text = "Отключить"
+                        Toast.makeText(this, "Успешное соединение со счетчиком", Toast.LENGTH_SHORT).show()
+                    } else {
+                        tvStatus.text = "Статус: Не подключено"
+                        tvStatus.setTextColor(android.graphics.Color.parseColor("#D32F2F"))
+                        btnConnect.text = "Подключить"
+                    }
+                }
+
+                findViewById<Button>(R.id.btnReadEnergy).setOnClickListener {
+                    if (!isConnected) { showToast("Сначала подключитесь к счетчику!"); return@setOnClickListener }
+                    findViewById<TextView>(R.id.tvEnergyAPlus).text = "А+ (Активная прямая): 1423.56 кВт*ч"
+                    findViewById<TextView>(R.id.tvEnergyAMinus).text = "А- (Активная обратная): 12.40 кВт*ч"
+                    findViewById<TextView>(R.id.tvEnergyRPlus).text = "Р+ (Реактивная индуктивная): 156.80 квар*ч"
+                    findViewById<TextView>(R.id.tvEnergyRMinus).text = "Р- (Реактивная емкостная): 5.12 квар*ч"
+                    showToast("Энергия успешно считана")
+                }
+
+                findViewById<Button>(R.id.btnReadNetwork).setOnClickListener {
+                    if (!isConnected) { showToast("Сначала подключитесь к счетчику!"); return@setOnClickListener }
+                    findViewById<TextView>(R.id.tvVoltage).text = "Напряжение (U): Фаза A=230.4 В, B=229.8 В, C=231.1 В"
+                    findViewById<TextView>(R.id.tvCurrent).text = "Ток (I): Фаза A=5.2 А, B=4.8 А, C=5.1 А"
+                    
+                    val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault())
+                    findViewById<TextView>(R.id.tvDateTime).text = "Дата и время счетчика: " + sdf.format(Date())
+                    showToast("Параметры и время считаны")
+                }
+
+                findViewById<Button>(R.id.btnReadVector).setOnClickListener {
+                    if (!isConnected) { showToast("Сначала подключитесь к счетчику!"); return@setOnClickListener }
+                    findViewById<TextView>(R.id.tvVectorA).text = "Фаза A: U=0°, I=15° (Cosφ = 0.96)"
+                    findViewById<TextView>(R.id.tvVectorB).text = "Фаза B: U=120°, I=135° (Cosφ = 0.95)"
+                    findViewById<TextView>(R.id.tvVectorC).text = "Фаза C: U=240°, I=252° (Cosφ = 0.97)"
+                    showToast("Векторная диаграмма построена")
+                }
+            }
+
+            private fun showToast(msg: String) {
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+            }
+        }
+        EOF
 
         gradle wrapper --gradle-version 8.6
 
     - name: Build APK
-      run: gradle :app:assembleDebug --info
+      run: ./gradlew :app:assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
