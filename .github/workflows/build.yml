@@ -13,6 +13,12 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
+    - name: Set up Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
     - name: Create Project Structure & iOS Style UI
       run: |
         set -e
@@ -401,6 +407,4 @@ jobs:
                 val tvStatus = findViewById<TextView>(R.id.tvStatus)
                 val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
 
-                val layoutEnergy = findViewById<LinearLayout>(R.id.layoutEnergy)
-                val layoutNetwork = findViewById<LinearLayout>(R.id.layoutNetwork)
- 
+                val layoutEnergy
