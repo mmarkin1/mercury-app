@@ -13,18 +13,6 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-      with:
-        gradle-version: '8.5'
-        cache-disabled: true
-
     - name: Create Project Structure & iOS Style UI
       run: |
         set -e
@@ -410,4 +398,9 @@ jobs:
                 val etHost = findViewById<EditText>(R.id.etHost)
                 val etPassword = findViewById<EditText>(R.id.etPassword)
                 val btnConnect = findViewById<Button>(R.id.btnConnect)
-                val tvStatus = find
+                val tvStatus = findViewById<TextView>(R.id.tvStatus)
+                val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
+
+                val layoutEnergy = findViewById<LinearLayout>(R.id.layoutEnergy)
+                val layoutNetwork = findViewById<LinearLayout>(R.id.layoutNetwork)
+ 
