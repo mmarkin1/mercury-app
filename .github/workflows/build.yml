@@ -32,7 +32,7 @@ jobs:
         mkdir -p app/src/main/res/values
         mkdir -p app/src/main/res/layout
 
-        printf 'android.suppressUnsupportedCompileSdk=34\norg.gradle.daemon=false\n' > gradle.properties
+        printf 'android.suppressUnsupportedCompileSdk=34\norg.gradle.daemon=false\nandroid.useAndroidX=true\nandroid.enableJetifier=true\n' > gradle.properties
 
         printf 'pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\nrootProject.name = "mercury-app"\ninclude(":app")\n' > settings.gradle.kts
 
