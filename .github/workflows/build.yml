@@ -19,15 +19,14 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+
     - name: Prepare Clean Project Structure
       run: |
-        rm -rf app settings.gradle.kts build.gradle.kts gradle
+        rm -rf app settings.gradle.kts build.gradle.kts gradle gradlew
         mkdir -p app/src/main/java/com/mercury/configurator
         mkdir -p app/src/main/res/layout
-        mkdir -p gradle/wrapper
-
-        # Жестко фиксируем Gradle 8.4 через wrapper файлы
-        printf 'distributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\ndistributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\n' > gradle/wrapper/gradle-wrapper.properties
 
         printf 'pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n        maven { url = java.net.URI("https://jitpack.io") }\n    }\n}\nrootProject.name = "mercury-app"\ninclude(":app")\n' > settings.gradle.kts
 
@@ -41,15 +40,11 @@ jobs:
 
         printf 'package com.mercury.configurator\n\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\n\nclass MainActivity : AppCompatActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n    }\n}\n' > app/src/main/java/com/mercury/configurator/MainActivity.kt
 
-        # Генерируем исполняемый gradle-wrapper скрипт
-        cat << 'EOF' > gradlew
-#!/bin/sh
-exec gradle "$@"
-EOF
-        chmod +x gradlew
+        # Генерируем официальный Wrapper с жестко зафиксированной версией 8.4
+        gradle wrapper --gradle-version 8.4
 
     - name: Build APK
-      run: ./gradlew :app:assembleDebug --stacktrace
+      run: ./gradlew :app:assembleDebug --info
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
