@@ -26,10 +26,12 @@ jobs:
 
     - name: Prepare Clean Project Structure
       run: |
-        rm -rf app settings.gradle.kts build.gradle.kts gradle gradlew
+        rm -rf app settings.gradle.kts build.gradle.kts gradle gradlew gradle.properties
         mkdir -p app/src/main/java/com/mercury/configurator
         mkdir -p app/src/main/res/values
         mkdir -p app/src/main/res/layout
+
+        printf 'android.suppressUnsupportedCompileSdk=34\nandroid.dependency.verification.mode=off\n' > gradle.properties
 
         printf 'pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n        maven { url = java.net.URI("https://jitpack.io") }\n    }\n}\nrootProject.name = "mercury-app"\ninclude(":app")\n' > settings.gradle.kts
 
