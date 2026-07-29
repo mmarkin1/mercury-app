@@ -381,7 +381,7 @@ jobs:
         gradle wrapper --gradle-version 8.5
 
     - name: Build APK
-      run: ./gradlew :app:assembleDebug --console=plain
+      run: ./gradlew :app:assembleDebug --console=plain > build_output.log 2>&1 || (cat build_output.log && exit 1)
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
