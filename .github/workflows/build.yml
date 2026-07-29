@@ -218,11 +218,11 @@ jobs:
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <TextView android:text="Накопленная энергия:" android:textStyle="bold" android:textSize="16sp"/>
-                        <TextView android:id="@+id/tvEnergyAPlus" android:text="А+ (Активная прямая): 0.00 кВт*ч" android:layout_marginTop="4dp"/>
-                        <TextView android:id="@+id/tvEnergyAMinus" android:text="А- (Активная обратная): 0.00 кВт*ч"/>
-                        <TextView android:id="@+id/tvEnergyRPlus" android:text="Р+ (Реактивная индуктивная): 0.00 квар*ч"/>
-                        <TextView android:id="@+id/tvEnergyRMinus" android:text="Р- (Реактивная емкостная): 0.00 квар*ч"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Накопленная энергия:" android:textStyle="bold" android:textSize="16sp"/>
+                        <TextView android:id="@+id/tvEnergyAPlus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="А+ (Активная прямая): 0.00 кВт*ч" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tvEnergyAMinus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="А- (Активная обратная): 0.00 кВт*ч"/>
+                        <TextView android:id="@+id/tvEnergyRPlus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Р+ (Реактивная индуктивная): 0.00 квар*ч"/>
+                        <TextView android:id="@+id/tvEnergyRMinus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Р- (Реактивная емкостная): 0.00 квар*ч"/>
 
                         <Button
                             android:id="@+id/btnReadEnergy"
@@ -239,10 +239,10 @@ jobs:
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <TextView android:text="Мгновенные параметры:" android:textStyle="bold" android:textSize="16sp"/>
-                        <TextView android:id="@+id/tvVoltage" android:text="Напряжение (U): Фаза A=0 В, B=0 В, C=0 В" android:layout_marginTop="4dp"/>
-                        <TextView android:id="@+id/tvCurrent" android:text="Ток (I): Фаза A=0 А, B=0 А, C=0 А"/>
-                        <TextView android:id="@+id/tvDateTime" android:text="Дата и время счетчика: --.--.---- --:--:--" android:layout_marginTop="8dp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Мгновенные параметры:" android:textStyle="bold" android:textSize="16sp"/>
+                        <TextView android:id="@+id/tvVoltage" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Напряжение (U): Фаза A=0 В, B=0 В, C=0 В" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tvCurrent" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ток (I): Фаза A=0 А, B=0 А, C=0 А"/>
+                        <TextView android:id="@+id/tvDateTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Дата и время счетчика: --.--.---- --:--:--" android:layout_marginTop="8dp" android:textStyle="bold"/>
 
                         <Button
                             android:id="@+id/btnReadNetwork"
@@ -259,11 +259,11 @@ jobs:
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <TextView android:text="Векторная диаграмма углов и фаз:" android:textStyle="bold" android:textSize="16sp"/>
-                        <TextView android:text="Углы между напряжениями и токами:" android:layout_marginTop="4dp"/>
-                        <TextView android:id="@+id/tvVectorA" android:text="Фаза A: U=0°, I=0° (Cosφ = 1.0)"/>
-                        <TextView android:id="@+id/tvVectorB" android:text="Фаза B: U=120°, I=120° (Cosφ = 1.0)"/>
-                        <TextView android:id="@+id/tvVectorC" android:text="Фаза C: U=240°, I=240° (Cosφ = 1.0)"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Векторная диаграмма углов и фаз:" android:textStyle="bold" android:textSize="16sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Углы между напряжениями и токами:" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tvVectorA" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Фаза A: U=0°, I=0° (Cosφ = 1.0)"/>
+                        <TextView android:id="@+id/tvVectorB" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Фаза B: U=120°, I=120° (Cosφ = 1.0)"/>
+                        <TextView android:id="@+id/tvVectorC" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Фаза C: U=240°, I=240° (Cosφ = 1.0)"/>
 
                         <Button
                             android:id="@+id/btnReadVector"
