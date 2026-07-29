@@ -18,7 +18,6 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: 'gradle'
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
@@ -33,7 +32,7 @@ jobs:
 
         printf 'pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n        maven { url = java.net.URI("https://jitpack.io") }\n    }\n}\nrootProject.name = "mercury-app"\ninclude(":app")\n' > settings.gradle.kts
 
-        printf 'plugins {\n    id("com.android.application") version "8.2.2" apply false\n    id("org.jetbrains.kotlin.android") version "1.9.22" apply false\n}\n' > build.gradle.kts
+        printf 'plugins {\n    id("com.android.application") version "8.3.0" apply false\n    id("org.jetbrains.kotlin.android") version "1.9.23" apply false\n}\n' > build.gradle.kts
 
         printf 'plugins {\n    id("com.android.application")\n    id("org.jetbrains.kotlin.android")\n}\n\nandroid {\n    namespace = "com.mercury.configurator"\n    compileSdk = 34\n\n    defaultConfig {\n        applicationId = "com.mercury.configurator"\n        minSdk = 26\n        targetSdk = 34\n        versionCode = 1\n        versionName = "1.0"\n    }\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n    kotlinOptions {\n        jvmTarget = "17"\n    }\n}\n\ndependencies {\n    implementation("androidx.core:core-ktx:1.12.0")\n    implementation("androidx.appcompat:appcompat:1.6.1")\n    implementation("com.google.android.material:material:1.11.0")\n}\n' > app/build.gradle.kts
 
@@ -43,7 +42,7 @@ jobs:
 
         printf 'package com.mercury.configurator\n\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\n\nclass MainActivity : AppCompatActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n    }\n}\n' > app/src/main/java/com/mercury/configurator/MainActivity.kt
 
-        gradle wrapper --gradle-version 8.4
+        gradle wrapper --gradle-version 8.6
 
     - name: Build APK
       run: ./gradlew :app:assembleDebug
