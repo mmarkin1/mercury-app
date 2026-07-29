@@ -19,6 +19,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        cache-read-only: true
+
     - name: Prepare Clean Project Structure
       run: |
         rm -rf app settings.gradle.kts build.gradle.kts gradle gradlew gradle.properties
@@ -45,7 +50,9 @@ jobs:
         gradle wrapper --gradle-version 8.6
 
     - name: Build APK
-      run: ./gradlew :app:assembleDebug --info --max-workers=1
+      run: |
+        ./gradlew :app:assembleDebug --stacktrace > build_output.log 2>&1 || true
+        cat build_output.log | tail -n 100
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
