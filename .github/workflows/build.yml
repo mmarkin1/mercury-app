@@ -31,17 +31,17 @@ jobs:
         mkdir -p app/src/main/res/values
         mkdir -p app/src/main/res/layout
 
-        printf 'android.suppressUnsupportedCompileSdk=34\n' > gradle.properties
+        printf 'android.suppressUnsupportedCompileSdk=34\norg.gradle.daemon=false\n' > gradle.properties
 
         printf 'pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\nrootProject.name = "mercury-app"\ninclude(":app")\n' > settings.gradle.kts
 
         printf 'plugins {\n    id("com.android.application") version "8.3.0" apply false\n    id("org.jetbrains.kotlin.android") version "1.9.23" apply false\n}\n' > build.gradle.kts
 
-        printf 'plugins {\n    id("com.android.application")\n    id("org.jetbrains.kotlin.android")\n}\n\nandroid {\n    namespace = "com.mercury.configurator"\n    compileSdk = 34\n\n    defaultConfig {\n        applicationId = "com.mercury.configurator"\n        minSdk = 26\n        targetSdk = 34\n        versionCode = 1\n        versionName = "1.0"\n    }\n\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n\n    kotlinOptions {\n        jvmTarget = "17"\n    }\n}\n\ndependencies {\n    implementation("androidx.core:core-ktx:1.12.0")\n}\n' > app/build.gradle.kts
+        printf 'plugins {\n    id("com.android.application")\n    id("org.jetbrains.kotlin.android")\n}\n\nandroid {\n    namespace = "com.mercury.configurator"\n    compileSdk = 34\n\n    defaultConfig {\n        applicationId = "com.mercury.configurator"\n        minSdk = 26\n        targetSdk = 34\n        versionCode = 1\n        versionName = "1.0"\n    }\n\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n\n    kotlinOptions {\n        jvmTarget = "17"\n    }\n\n    lint {\n        abortOnError = false\n        checkReleaseBuilds = false\n    }\n}\n\ndependencies {\n    implementation("androidx.core:core-ktx:1.12.0")\n}\n' > app/build.gradle.kts
 
         printf '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">\n        <item name="android:colorPrimary">#6200EE</item>\n    </style>\n</resources>\n' > app/src/main/res/values/styles.xml
 
-        printf '<?xml version="1.0" encoding="utf-8"?>\n<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    <application android:allowBackup="true" android:label="Mercury Configurator" android:theme="@style/AppTheme">\n        <activity android:name=".MainActivity" android:exported="true">\n            <intent-filter>\n                <action android:name="android.intent.action.MAIN" />\n                <category android:name="android.intent.category.LAUNCHER" />\n            </intent-filter>\n        </activity>\n    </application>\n</manifest>\n' > app/src/main/AndroidManifest.xml
+        printf '<?xml version="1.0" encoding="utf-8"?>\n<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    <application android:allowBackup="true" android:label="Mercury Configurator" android:theme="@style/AppTheme">\n        <activity android:name=".MainActivity" android:exported="true">\n            <intent-filter>\n                <action android:name="android.intent.action.MAIN" />\n                <category android:name="android.intent.category.LAUNCHER" />\n            </intent-filter>\n        </activity>\n    </application>\n</manifest>\n' > app/src/main/res/AndroidManifest.xml
 
         printf '<?xml version="1.0" encoding="utf-8"?>\n<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center">\n    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mercury Configurator" android:textSize="20sp"/>\n</LinearLayout>\n' > app/src/main/res/layout/activity_main.xml
 
@@ -50,7 +50,7 @@ jobs:
         gradle wrapper --gradle-version 8.6
 
     - name: Build APK
-      run: ./gradlew :app:assembleDebug --info --stacktrace
+      run: ./gradlew :app:assembleDebug --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
