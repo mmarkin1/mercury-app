@@ -1,3 +1,30 @@
+name: Build Android APK (iOS Style)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.5'
+        cache-disabled: true
+
     - name: Create Project Structure & iOS Style UI
       run: |
         set -e
@@ -383,101 +410,4 @@
                 val etHost = findViewById<EditText>(R.id.etHost)
                 val etPassword = findViewById<EditText>(R.id.etPassword)
                 val btnConnect = findViewById<Button>(R.id.btnConnect)
-                val tvStatus = findViewById<TextView>(R.id.tvStatus)
-                val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
-
-                val layoutEnergy = findViewById<LinearLayout>(R.id.layoutEnergy)
-                val layoutNetwork = findViewById<LinearLayout>(R.id.layoutNetwork)
-                val layoutVector = findViewById<LinearLayout>(R.id.layoutVector)
-
-                spinnerInterface.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, arrayOf("RS-485", "TCP/IP", "Оптопорт (УСО-2)"))
-                spinnerProtocol.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, arrayOf("Протокол Меркурий", "СПОДЕС"))
-
-                tabLayout.addTab(tabLayout.newTab().setText("Энергия"))
-                tabLayout.addTab(tabLayout.newTab().setText("Сеть"))
-                tabLayout.addTab(tabLayout.newTab().setText("Вектора"))
-
-                tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                    override fun onTabSelected(tab: TabLayout.Tab?) {
-                        layoutEnergy.visibility = View.GONE
-                        layoutNetwork.visibility = View.GONE
-                        layoutVector.visibility = View.GONE
-                        when (tab?.position) {
-                            0 -> layoutEnergy.visibility = View.VISIBLE
-                            1 -> layoutNetwork.visibility = View.VISIBLE
-                            2 -> layoutVector.visibility = View.VISIBLE
-                        }
-                    }
-                    override fun onTabUnselected(tab: TabLayout.Tab?) {}
-                    override fun onTabReselected(tab: TabLayout.Tab?) {}
-                })
-
-                btnConnect.setOnClickListener {
-                    if (!isConnected) {
-                        val host = etHost.text.toString().trim()
-                        if (host.isEmpty()) {
-                            showToast("Введите IP-адрес или хост")
-                            return@setOnClickListener
-                        }
-
-                        isConnected = true
-                        tvStatus.text = "Статус: Подключено к $host"
-                        tvStatus.setTextColor(android.graphics.Color.parseColor("#34C759"))
-                        btnConnect.text = "Отключить"
-                        btnConnect.setBackgroundColor(android.graphics.Color.parseColor("#FF3B30"))
-
-                        etHost.isEnabled = false
-                        etPassword.isEnabled = false
-                        spinnerInterface.isEnabled = false
-                        spinnerProtocol.isEnabled = false
-
-                        showToast("Соединение установлено")
-                    } else {
-                        isConnected = false
-                        tvStatus.text = "Статус: Не подключено"
-                        tvStatus.setTextColor(android.graphics.Color.parseColor("#FF3B30"))
-                        btnConnect.text = "Подключить"
-                        btnConnect.setBackgroundColor(android.graphics.Color.parseColor("#007AFF"))
-
-                        etHost.isEnabled = true
-                        etPassword.isEnabled = true
-                        spinnerInterface.isEnabled = true
-                        spinnerProtocol.isEnabled = true
-                    }
-                }
-
-                findViewById<Button>(R.id.btnReadEnergy).setOnClickListener {
-                    if (!isConnected) { showToast("Сначала выполните подключение"); return@setOnClickListener }
-                    findViewById<TextView>(R.id.tvEnergyAPlus).text = "А+ (Активная прямая): 1423.56 кВт*ч"
-                    findViewById<TextView>(R.id.tvEnergyAMinus).text = "А- (Активная обратная): 12.40 кВт*ч"
-                    findViewById<TextView>(R.id.tvEnergyRPlus).text = "Р+ (Реактивная индуктивная): 156.80 квар*ч"
-                    findViewById<TextView>(R.id.tvEnergyRMinus).text = "Р- (Реактивная емкостная): 5.12 квар*ч"
-                    showToast("Энергия считана")
-                }
-
-                findViewById<Button>(R.id.btnReadNetwork).setOnClickListener {
-                    if (!isConnected) { showToast("Сначала выполните подключение"); return@setOnClickListener }
-                    findViewById<TextView>(R.id.tvVoltage).text = "Напряжение (U): Фаза A=230.4 В, B=229.8 В, C=231.1 В"
-                    findViewById<TextView>(R.id.tvCurrent).text = "Ток (I): Фаза A=5.2 А, B=4.8 А, C=5.1 А"
-                    
-                    val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault())
-                    findViewById<TextView>(R.id.tvDateTime).text = "Дата и время: " + sdf.format(Date())
-                    showToast("Параметры обновлены")
-                }
-
-                findViewById<Button>(R.id.btnReadVector).setOnClickListener {
-                    if (!isConnected) { showToast("Сначала выполните подключение"); return@setOnClickListener }
-                    findViewById<TextView>(R.id.tvVectorA).text = "Фаза A: U=0°, I=15° (Cosφ = 0.96)"
-                    findViewById<TextView>(R.id.tvVectorB).text = "Фаза B: U=120°, I=135° (Cosφ = 0.95)"
-                    findViewById<TextView>(R.id.tvVectorC).text = "Фаза C: U=240°, I=252° (Cosφ = 0.97)"
-                    showToast("Диаграмма обновлена")
-                }
-            }
-
-            private fun showToast(msg: String) {
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-            }
-        }
-        EOF
-
-        gradle wrapper --gradle-version 8.5
+                val tvStatus = find
