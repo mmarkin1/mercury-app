@@ -22,6 +22,7 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
+        gradle-version: '8.6'
         cache-read-only: true
 
     - name: Prepare Clean Project Structure
@@ -50,7 +51,7 @@ jobs:
         gradle wrapper --gradle-version 8.6
 
     - name: Build APK
-      run: ./gradlew :app:assembleDebug --stacktrace
+      run: gradle :app:assembleDebug --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
