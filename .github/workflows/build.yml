@@ -1,4 +1,4 @@
-Name: Build Android APK (iOS Style)
+name: Build Android APK (iOS Style)
 
 on:
   push:
@@ -100,7 +100,6 @@ jobs:
         }
         EOF
 
-        # iOS Style Card Background Drawable
         cat << 'EOF' > app/src/main/res/drawable/ios_card_background.xml
         <?xml version="1.0" encoding="utf-8"?>
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
@@ -110,7 +109,6 @@ jobs:
         </shape>
         EOF
 
-        # iOS Style Button Background Drawable
         cat << 'EOF' > app/src/main/res/drawable/ios_button_background.xml
         <?xml version="1.0" encoding="utf-8"?>
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
@@ -154,7 +152,6 @@ jobs:
         </manifest>
         EOF
 
-        # iOS Style Layout
         cat << 'EOF' > app/src/main/res/layout/activity_main.xml
         <?xml version="1.0" encoding="utf-8"?>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -163,7 +160,6 @@ jobs:
             android:orientation="vertical"
             android:background="#F2F2F7">
 
-            <!-- iOS Navigation Bar Header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -199,7 +195,6 @@ jobs:
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Connection Card (iOS Grouped Style) -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -283,7 +278,6 @@ jobs:
                             android:stateListAnimator="@null"/>
                     </LinearLayout>
 
-                    <!-- Status Card -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -302,7 +296,6 @@ jobs:
                             android:textStyle="bold"/>
                     </LinearLayout>
 
-                    <!-- Tabs / Segmented Control style layout -->
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/tabLayout"
                         android:layout_width="match_parent"
@@ -313,7 +306,6 @@ jobs:
                         app:tabSelectedTextColor="#007AFF"
                         app:tabTextColor="#8E8E93"/>
 
-                    <!-- Energy Card -->
                     <LinearLayout
                         android:id="@+id/layoutEnergy"
                         android:layout_width="match_parent"
@@ -339,7 +331,6 @@ jobs:
                             android:layout_marginTop="12dp"/>
                     </LinearLayout>
 
-                    <!-- Network & Time Card -->
                     <LinearLayout
                         android:id="@+id/layoutNetwork"
                         android:layout_width="match_parent"
@@ -365,7 +356,6 @@ jobs:
                             android:layout_marginTop="12dp"/>
                     </LinearLayout>
 
-                    <!-- Vector Card -->
                     <LinearLayout
                         android:id="@+id/layoutVector"
                         android:layout_width="match_parent"
@@ -396,7 +386,6 @@ jobs:
         </LinearLayout>
         EOF
 
-        # Kotlin Activity Code
         cat << 'EOF' > app/src/main/java/com/mercury/configurator/MainActivity.kt
         package com.mercury.configurator
 
@@ -412,4 +401,12 @@ jobs:
             private var isConnected = false
 
             override fun onCreate(savedInstanceState: Bundle?) {
-                super.onCreate(
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+
+                val spinnerInterface = findViewById<Spinner>(R.id.spinnerInterface)
+                val spinnerProtocol = findViewById<Spinner>(R.id.spinnerProtocol)
+                val etHost = findViewById<EditText>(R.id.etHost)
+                val etPassword = findViewById<EditText>(R.id.etPassword)
+                val btnConnect = findViewById<Button>(R.id.btnConnect)
+                val tvStatus = findViewById<TextVi
