@@ -381,7 +381,7 @@ jobs:
         gradle wrapper --gradle-version 8.6
 
     - name: Build APK
-      run: ./gradlew :app:assembleDebug --stacktrace
+      run: ./gradlew :app:assembleDebug --stacktrace --info
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
